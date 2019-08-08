@@ -26,7 +26,7 @@ public class Listener {
 		SpringApplication.run(Listener.class, args);
 	}
 
-	@RabbitListener(queues = "q.example")
+	@RabbitListener(queues = "queue_demo")
 	public void onMessage(Order order) {
 		if (timestamp == null)
 			timestamp = System.currentTimeMillis();
@@ -36,9 +36,9 @@ public class Listener {
 	@Bean
 	public ConnectionFactory connectionFactory() {
 		CachingConnectionFactory connectionFactory = new CachingConnectionFactory();
-		connectionFactory.setUsername("guest");
-		connectionFactory.setPassword("guest");
-		connectionFactory.setAddresses("192.168.99.100:30000,192.168.99.100:30002,192.168.99.100:30004");
+		connectionFactory.setUsername("root");
+		connectionFactory.setPassword("root123");
+		connectionFactory.setAddresses("master:5672,slave01:5672,slave02:5672");
 		connectionFactory.setChannelCacheSize(10);
 		return connectionFactory;
 	}
@@ -52,9 +52,9 @@ public class Listener {
 		return factory;
 	}
 
-	@Bean
-	public Queue queue() {
-		return new Queue("q.example");
-	}
+//	@Bean
+//	public Queue queue() {
+//		return new Queue("queue_demo");
+//	}
 
 }

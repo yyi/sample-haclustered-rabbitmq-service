@@ -18,12 +18,12 @@ import pl.piomin.services.rabbit.commons.message.OrderType;
 
 @SpringBootApplication
 public class Sender {
-	
+
 	private static Logger logger = Logger.getLogger("Sender");
-	
+
 	@Autowired
 	RabbitTemplate template;
-	
+
 	public static void main(String[] args) {
 		SpringApplication.run(Sender.class, args);
 	}
@@ -32,25 +32,25 @@ public class Sender {
 	public void send() {
 		for (int i = 0; i < 100000; i++) {
 			int id = new Random().nextInt(100000);
-			template.convertAndSend(new Order(id, "TEST"+id, OrderType.values()[(id%2)]));
+			template.convertAndSend("routing_demo",new Order(id, "TEST"+id, OrderType.values()[(id%2)]));
 		}
 		logger.info("Sending completed.");
 	}
-	
+
     @Bean
     public ConnectionFactory connectionFactory() {
         CachingConnectionFactory connectionFactory = new CachingConnectionFactory();
-        connectionFactory.setUsername("guest");
-        connectionFactory.setPassword("guest");
-        connectionFactory.setAddresses("192.168.99.100:30000,192.168.99.100:30002,,192.168.99.100:30004");
+        connectionFactory.setUsername("root");
+        connectionFactory.setPassword("root123");
+        connectionFactory.setAddresses("master:5672,slave01:5672,slave02:5672");
         return connectionFactory;
     }
-    
+
     @Bean
     public RabbitTemplate template() {
         RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory());
-        rabbitTemplate.setExchange("ex.example");
+        rabbitTemplate.setExchange("exchange_demo");
         return rabbitTemplate;
     }
-    
+
 }
